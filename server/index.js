@@ -14,20 +14,27 @@ connectDB();
 const app = express();
 
 // Middleware
-const allowedOrigins = process.env.CORS_ORIGIN
+const devOrigins = ['http://localhost:5173', 'http://localhost:3000', 'http://localhost:4173'];
+const envOrigins = process.env.CORS_ORIGIN
     ? process.env.CORS_ORIGIN.split(',').map((o) => o.trim())
-    : ['http://localhost:5173', 'http://localhost:3000'];
+    : [];
+const allowedOrigins = [...new Set([...devOrigins, ...envOrigins])];
+
+console.log('✅ CORS allowed origins:', allowedOrigins);
 
 app.use(cors({
     origin: (origin, callback) => {
-        // Allow requests with no origin (mobile apps, curl, Render health checks)
+        // Allow requests with no origin (curl, Render health checks, mobile apps)
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
+            console.warn(`⛔ CORS blocked origin: ${origin}`);
             callback(new Error(`CORS blocked: ${origin}`));
         }
     },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 // Item photos are submitted as base64 data URLs. Express defaults to 100 KB,
 // which rejects normal photos before the items route receives the request.
