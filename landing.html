@@ -1,0 +1,1934 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Smart Lost & Found | University Recovery Platform</title>
+
+    <!-- Inter & Plus Jakarta Sans Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* ==========================================================================
+       1. CSS DESIGN TOKENS & RESET
+       ========================================================================== */
+        :root {
+            /* Brand Palette */
+            --color-primary-50: #eff6ff;
+            --color-primary-100: #dbeafe;
+            --color-primary-500: #2563eb;
+            --color-primary-600: #1d4ed8;
+            --color-primary-700: #1e40af;
+            --color-primary-900: #1e3a8a;
+
+            --color-secondary-50: #fff1f2;
+            --color-secondary-500: #e11d48;
+            --color-secondary-600: #be123c;
+
+            --color-accent-amber: #d97706;
+            --color-accent-green: #16a34a;
+
+            /* Neutrals & Canvas */
+            --color-bg-app: #f8fafc;
+            --color-surface: #ffffff;
+            --color-surface-subtle: #f1f5f9;
+            --color-border-subtle: #e2e8f0;
+            --color-border-medium: #cbd5e1;
+
+            /* Typography Tokens */
+            --color-text-main: #0f172a;
+            --color-text-muted: #64748b;
+            --color-text-disabled: #94a3b8;
+            --color-text-on-primary: #ffffff;
+
+            /* Status Surfaces */
+            --color-success-bg: #f0fdf4;
+            --color-success-border: #bbf7d0;
+            --color-success-text: #15803d;
+
+            --color-warning-bg: #fffbeb;
+            --color-warning-border: #fef08a;
+            --color-warning-text: #b45309;
+
+            /* Design Constants */
+            --font-display: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 18px;
+            --radius-xl: 24px;
+            --radius-full: 9999px;
+
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 10px 25px -3px rgba(15, 23, 42, 0.08), 0 4px 10px -4px rgba(15, 23, 42, 0.04);
+            --shadow-glow: 0 0 35px rgba(37, 99, 235, 0.18);
+            --shadow-focus: 0 0 0 3px rgba(37, 99, 235, 0.35);
+
+            --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--color-text-main);
+            background-color: var(--color-bg-app);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* ==========================================================================
+       2. TYPOGRAPHY & REUSABLE COMPONENTS
+       ========================================================================== */
+        .section-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.375rem 0.875rem;
+            background-color: var(--color-primary-50);
+            color: var(--color-primary-700);
+            font-family: var(--font-body);
+            font-size: 0.8125rem;
+            font-weight: 600;
+            border-radius: var(--radius-full);
+            border: 1px solid var(--color-primary-100);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 2.25rem;
+            font-weight: 800;
+            line-height: 1.2;
+            color: var(--color-text-main);
+            letter-spacing: -0.025em;
+        }
+
+        @media (min-width: 768px) {
+            .section-title {
+                font-size: 2.75rem;
+            }
+        }
+
+        .section-subtitle {
+            font-size: 1.125rem;
+            color: var(--color-text-muted);
+            margin-top: 0.75rem;
+            max-width: 640px;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.625rem;
+            padding: 0.75rem 1.375rem;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            border-radius: var(--radius-md);
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background-color: var(--color-primary-600);
+            color: var(--color-text-on-primary);
+            box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--color-primary-700);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background-color: var(--color-surface);
+            border-color: var(--color-border-medium);
+            color: var(--color-text-main);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--color-surface-subtle);
+            border-color: var(--color-text-muted);
+            transform: translateY(-1px);
+        }
+
+        .btn-ghost {
+            background-color: transparent;
+            color: var(--color-text-main);
+        }
+
+        .btn-ghost:hover {
+            background-color: var(--color-surface-subtle);
+            color: var(--color-primary-600);
+        }
+
+        .btn-lg {
+            padding: 0.875rem 1.75rem;
+            font-size: 1rem;
+            border-radius: var(--radius-lg);
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.625rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: var(--radius-full);
+            line-height: 1;
+        }
+
+        .badge-success {
+            background-color: var(--color-success-bg);
+            color: var(--color-success-text);
+            border: 1px solid var(--color-success-border);
+        }
+
+        .badge-warning {
+            background-color: var(--color-warning-bg);
+            color: var(--color-warning-text);
+            border: 1px solid var(--color-warning-border);
+        }
+
+        .badge-primary {
+            background-color: var(--color-primary-50);
+            color: var(--color-primary-700);
+            border: 1px solid var(--color-primary-100);
+        }
+
+        /* ==========================================================================
+       3. HEADER & NAVIGATION
+       ========================================================================== */
+        .header {
+            position: sticky;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background-color: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--color-border-subtle);
+            transition: all var(--transition-fast);
+        }
+
+        .header-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 76px;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--color-primary-600), var(--color-primary-900));
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+        }
+
+        .brand-name {
+            font-family: var(--font-display);
+            font-size: 1.1875rem;
+            font-weight: 800;
+            color: var(--color-text-main);
+            letter-spacing: -0.02em;
+        }
+
+        .brand-name span {
+            color: var(--color-primary-600);
+        }
+
+        .nav-menu {
+            display: none;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        @media (min-width: 992px) {
+            .nav-menu {
+                display: flex;
+            }
+        }
+
+        .nav-link {
+            font-size: 0.9375rem;
+            font-weight: 500;
+            color: var(--color-text-muted);
+            transition: color var(--transition-fast);
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--color-primary-600);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .mobile-menu-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            border: 1px solid var(--color-border-subtle);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            color: var(--color-text-main);
+        }
+
+        @media (min-width: 992px) {
+            .mobile-menu-btn {
+                display: none;
+            }
+        }
+
+        /* Mobile Drawer */
+        .mobile-drawer {
+            position: fixed;
+            top: 76px;
+            left: 0;
+            right: 0;
+            background-color: var(--color-surface);
+            border-bottom: 1px solid var(--color-border-subtle);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-100%);
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-normal);
+            z-index: 999;
+        }
+
+        .mobile-drawer.active {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* ==========================================================================
+       4. HERO SECTION
+       ========================================================================== */
+        .hero {
+            padding: 4rem 0 6rem;
+            position: relative;
+            overflow: hidden;
+            background: radial-gradient(circle at 70% 20%, rgba(219, 234, 254, 0.4) 0%, rgba(248, 250, 252, 0) 60%);
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 3.5rem;
+            align-items: center;
+        }
+
+        @media (min-width: 992px) {
+            .hero-grid {
+                grid-template-columns: 1.1fr 0.9fr;
+            }
+        }
+
+        .hero-content {
+            max-width: 620px;
+        }
+
+        .hero-headline {
+            font-family: var(--font-display);
+            font-size: 2.75rem;
+            font-weight: 800;
+            line-height: 1.12;
+            color: var(--color-text-main);
+            letter-spacing: -0.03em;
+            margin-bottom: 1.25rem;
+        }
+
+        @media (min-width: 768px) {
+            .hero-headline {
+                font-size: 3.75rem;
+            }
+        }
+
+        .hero-headline span {
+            background: linear-gradient(135deg, var(--color-primary-600) 0%, var(--color-primary-900) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-description {
+            font-size: 1.125rem;
+            line-height: 1.6;
+            color: var(--color-text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .hero-cta-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .hero-trust-badges {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--color-border-subtle);
+        }
+
+        .avatar-stack {
+            display: flex;
+            align-items: center;
+        }
+
+        .avatar-stack img {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-full);
+            border: 2px solid var(--color-surface);
+            margin-left: -0.625rem;
+        }
+
+        .avatar-stack img:first-child {
+            margin-left: 0;
+        }
+
+        .trust-text {
+            font-size: 0.875rem;
+            color: var(--color-text-muted);
+        }
+
+        .trust-text strong {
+            color: var(--color-text-main);
+        }
+
+        /* Hero Visual Showcase */
+        .hero-visual-wrapper {
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+
+        .hero-main-card {
+            position: relative;
+            width: 100%;
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            background: var(--color-surface);
+            box-shadow: var(--shadow-lg), var(--shadow-glow);
+            border: 1px solid var(--color-border-subtle);
+        }
+
+        .hero-main-card img {
+            width: 100%;
+            height: 440px;
+            object-fit: cover;
+        }
+
+        .hero-card-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(15, 23, 42, 0.7) 0%, rgba(15, 23, 42, 0) 50%);
+            display: flex;
+            align-items: flex-end;
+            padding: 1.75rem;
+            color: white;
+        }
+
+        .hero-card-info h4 {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .hero-card-info p {
+            font-size: 0.875rem;
+            opacity: 0.85;
+        }
+
+        /* Floating UI Elements */
+        .floating-card {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            padding: 0.875rem 1.125rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            z-index: 10;
+            animation: float 6s ease-in-out infinite;
+            min-width: 210px;
+        }
+
+        .float-card-1 {
+            top: 8%;
+            left: -6%;
+            animation-delay: 0s;
+        }
+
+        .float-card-2 {
+            top: 48%;
+            right: -8%;
+            animation-delay: 2s;
+        }
+
+        .float-card-3 {
+            bottom: 6%;
+            left: -2%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-12px);
+            }
+        }
+
+        .float-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .float-icon.blue {
+            background-color: var(--color-primary-600);
+        }
+
+        .float-icon.green {
+            background-color: var(--color-accent-green);
+        }
+
+        .float-icon.amber {
+            background-color: var(--color-accent-amber);
+        }
+
+        .float-meta label {
+            display: block;
+            font-size: 0.6875rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--color-text-muted);
+            letter-spacing: 0.05em;
+        }
+
+        .float-meta span {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: var(--color-text-main);
+        }
+
+        @media (max-width: 767px) {
+            .floating-card {
+                display: none;
+            }
+        }
+
+        /* ==========================================================================
+       5. TRUST & METRICS SECTION
+       ========================================================================== */
+        .trust-section {
+            padding: 3rem 0;
+            background-color: var(--color-surface);
+            border-y: 1px solid var(--color-border-subtle);
+        }
+
+        .trust-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .trust-header p {
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--color-text-muted);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            background-color: var(--color-bg-app);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--color-border-subtle);
+            transition: transform var(--transition-fast);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .stat-number {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--color-primary-600);
+            line-height: 1.1;
+            margin-bottom: 0.375rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--color-text-muted);
+        }
+
+        /* ==========================================================================
+       6. HOW IT WORKS SECTION
+       ========================================================================== */
+        .how-it-works {
+            padding: 6rem 0;
+            background-color: var(--color-bg-app);
+        }
+
+        .section-header-center {
+            text-align: center;
+            max-width: 680px;
+            margin: 0 auto 4rem;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            position: relative;
+        }
+
+        @media (min-width: 768px) {
+            .steps-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .steps-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .step-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 2rem 1.5rem;
+            position: relative;
+            transition: all var(--transition-normal);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .step-card:hover {
+            border-color: var(--color-primary-500);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px);
+        }
+
+        .step-number {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-md);
+            background-color: var(--color-primary-50);
+            color: var(--color-primary-600);
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .step-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: var(--color-text-main);
+        }
+
+        .step-desc {
+            font-size: 0.9375rem;
+            color: var(--color-text-muted);
+            line-height: 1.5;
+        }
+
+        /* ==========================================================================
+       7. FEATURES SECTION
+       ========================================================================== */
+        .features {
+            padding: 6rem 0;
+            background-color: var(--color-surface);
+            border-top: 1px solid var(--color-border-subtle);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .features-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .feature-card {
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--color-border-subtle);
+            background-color: var(--color-bg-app);
+            transition: all var(--transition-normal);
+        }
+
+        .feature-card:hover {
+            background-color: var(--color-surface);
+            border-color: var(--color-primary-500);
+            box-shadow: var(--shadow-md);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            background: var(--color-primary-600);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .feature-title {
+            font-family: var(--font-display);
+            font-size: 1.1875rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--color-text-main);
+        }
+
+        .feature-desc {
+            font-size: 0.9375rem;
+            color: var(--color-text-muted);
+            line-height: 1.5;
+        }
+
+        /* ==========================================================================
+       8. CATEGORIES SECTION
+       ========================================================================== */
+        .categories {
+            padding: 6rem 0;
+            background-color: var(--color-bg-app);
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.25rem;
+        }
+
+        @media (min-width: 640px) {
+            .categories-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .categories-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .category-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            text-decoration: none;
+        }
+
+        .category-card:hover {
+            border-color: var(--color-primary-500);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .category-icon-wrapper {
+            width: 56px;
+            height: 56px;
+            border-radius: var(--radius-md);
+            background-color: var(--color-primary-50);
+            color: var(--color-primary-600);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            transition: all var(--transition-fast);
+        }
+
+        .category-card:hover .category-icon-wrapper {
+            background-color: var(--color-primary-600);
+            color: white;
+        }
+
+        .category-name {
+            font-family: var(--font-display);
+            font-size: 1.0625rem;
+            font-weight: 700;
+            color: var(--color-text-main);
+            margin-bottom: 0.25rem;
+        }
+
+        .category-count {
+            font-size: 0.8125rem;
+            color: var(--color-text-muted);
+            font-weight: 500;
+        }
+
+        /* ==========================================================================
+       9. RECENT ITEMS SECTION
+       ========================================================================== */
+        .recent-items {
+            padding: 6rem 0;
+            background-color: var(--color-surface);
+            border-top: 1px solid var(--color-border-subtle);
+        }
+
+        .filter-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 0.5rem 1.25rem;
+            border-radius: var(--radius-full);
+            font-size: 0.875rem;
+            font-weight: 600;
+            border: 1px solid var(--color-border-medium);
+            background: transparent;
+            color: var(--color-text-muted);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .tab-btn.active,
+        .tab-btn:hover {
+            background-color: var(--color-primary-600);
+            color: white;
+            border-color: var(--color-primary-600);
+        }
+
+        .items-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.75rem;
+        }
+
+        @media (min-width: 640px) {
+            .items-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .items-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .item-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border-subtle);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-normal);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .item-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--color-primary-500);
+        }
+
+        .item-image-wrapper {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+            background-color: var(--color-surface-subtle);
+        }
+
+        .item-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform var(--transition-smooth);
+        }
+
+        .item-card:hover .item-image-wrapper img {
+            transform: scale(1.05);
+        }
+
+        .item-status-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+        }
+
+        .item-content {
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .item-category {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--color-primary-600);
+            margin-bottom: 0.375rem;
+        }
+
+        .item-title {
+            font-family: var(--font-display);
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--color-text-main);
+            margin-bottom: 0.5rem;
+        }
+
+        .item-meta-list {
+            margin-top: auto;
+            padding-top: 1rem;
+            border-top: 1px solid var(--color-border-subtle);
+            display: flex;
+            flex-direction: column;
+            gap: 0.375rem;
+            font-size: 0.8125rem;
+            color: var(--color-text-muted);
+        }
+
+        .item-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .item-card-footer {
+            padding: 0.875rem 1.25rem;
+            background-color: var(--color-bg-app);
+            border-top: 1px solid var(--color-border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* ==========================================================================
+       10. CALL TO ACTION SECTION
+       ========================================================================== */
+        .cta-section {
+            padding: 5rem 0;
+            background: linear-gradient(135deg, var(--color-primary-900) 0%, #0f172a 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-wrapper {
+            text-align: center;
+            max-width: 720px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .cta-title {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        .cta-desc {
+            font-size: 1.125rem;
+            color: var(--color-primary-100);
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        /* ==========================================================================
+       11. FOOTER
+       ========================================================================== */
+        .footer {
+            background-color: var(--color-text-main);
+            color: #94a3b8;
+            padding: 4rem 0 2rem;
+            font-size: 0.875rem;
+            border-top: 1px solid #1e293b;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 3rem;
+            margin-bottom: 3.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .footer-grid {
+                grid-template-columns: 2fr repeat(3, 1fr);
+            }
+        }
+
+        .footer-brand p {
+            margin-top: 1rem;
+            line-height: 1.6;
+            max-width: 320px;
+        }
+
+        .footer-heading {
+            color: white;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 0.9375rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .footer-links a {
+            transition: color var(--transition-fast);
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            padding-top: 2rem;
+            border-top: 1px solid #1e293b;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+            justify-content: space-between;
+            text-align: center;
+        }
+
+        @media (min-width: 768px) {
+            .footer-bottom {
+                flex-direction: row;
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ==========================================================================
+       HEADER / NAVBAR
+       ========================================================================== -->
+    <header class="header">
+        <div class="container">
+            <nav class="header-nav" aria-label="Main Navigation">
+                <!-- Logo -->
+                <a href="#" class="brand-logo">
+                    <div class="logo-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            <path d="M11 8v6M8 11h6"></path>
+                        </svg>
+                    </div>
+                    <span class="brand-name">Campus<span>Smart</span></span>
+                </a>
+
+                <!-- Desktop Navigation Menu -->
+                <ul class="nav-menu">
+                    <li><a href="#home" class="nav-link active">Home</a></li>
+                    <li><a href="#recent" class="nav-link">Browse Items</a></li>
+                    <li><a href="#how-it-works" class="nav-link">How It Works</a></li>
+                    <li><a href="#features" class="nav-link">Features</a></li>
+                </ul>
+
+                <!-- Right Side Actions -->
+                <div class="nav-actions">
+                    <a href="#" class="btn btn-ghost">Log In</a>
+                    <a href="#report" class="btn btn-primary">Report an Item</a>
+                    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle Mobile Menu">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Mobile Slide Drawer -->
+        <div class="mobile-drawer" id="mobileDrawer">
+            <a href="#home" class="nav-link active">Home</a>
+            <a href="#recent" class="nav-link">Browse Items</a>
+            <a href="#how-it-works" class="nav-link">How It Works</a>
+            <a href="#features" class="nav-link">Features</a>
+            <hr style="border: none; border-top: 1px solid var(--color-border-subtle);">
+            <a href="#" class="btn btn-secondary" style="width: 100%;">Log In</a>
+        </div>
+    </header>
+
+    <main id="home">
+        <!-- ==========================================================================
+         HERO SECTION
+         ========================================================================== -->
+        <section class="hero">
+            <div class="container">
+                <div class="hero-grid">
+
+                    <!-- Hero Text -->
+                    <div class="hero-content">
+                        <div class="section-tag">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                            </svg>
+                            Official University Platform
+                        </div>
+                        <h1 class="hero-headline">
+                            Lost something on <span>campus?</span>
+                        </h1>
+                        <p class="hero-description">
+                            The AI-powered campus recovery network. Students, staff, and campus security quickly report,
+                            search, match, and securely recover lost belongings.
+                        </p>
+
+                        <div class="hero-cta-group">
+                            <a href="#report" class="btn btn-primary btn-lg">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                                Report Lost Item
+                            </a>
+                            <a href="#recent" class="btn btn-secondary btn-lg">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                </svg>
+                                Browse Found Items
+                            </a>
+                        </div>
+
+                        <div class="hero-trust-badges">
+                            <div class="avatar-stack">
+                                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80"
+                                    alt="Student User">
+                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80"
+                                    alt="Staff User">
+                                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80"
+                                    alt="Student User">
+                            </div>
+                            <div class="trust-text">
+                                Joined by <strong>18,000+ students</strong> &amp; campus staff across 12 faculties.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hero Visual & Floating Cards -->
+                    <div class="hero-visual-wrapper">
+                        <div class="hero-main-card">
+                            <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1000&q=80"
+                                alt="Student recovering a lost backpack at campus library desk">
+                            <div class="hero-card-overlay">
+                                <div class="hero-card-info">
+                                    <h4>Central Library Recovery Station</h4>
+                                    <p>Verified Item Transfer #4920</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Floating Micro UI Card 1 -->
+                        <div class="floating-card float-card-1">
+                            <div class="float-icon blue">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <polygon
+                                        points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                                    </polygon>
+                                </svg>
+                            </div>
+                            <div class="float-meta">
+                                <label>AI Match Engine</label>
+                                <span>98% Match Detected</span>
+                            </div>
+                        </div>
+
+                        <!-- Floating Micro UI Card 2 -->
+                        <div class="floating-card float-card-2">
+                            <div class="float-icon green">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                </svg>
+                            </div>
+                            <div class="float-meta">
+                                <label>Claim Verified</label>
+                                <span>Student ID Verified</span>
+                            </div>
+                        </div>
+
+                        <!-- Floating Micro UI Card 3 -->
+                        <div class="floating-card float-card-3">
+                            <div class="float-icon amber">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                                </svg>
+                            </div>
+                            <div class="float-meta">
+                                <label>Item Handover</label>
+                                <span>Returned to Owner</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================================================
+         TRUST & METRICS SECTION
+         ========================================================================== -->
+        <section class="trust-section">
+            <div class="container">
+                <div class="trust-header">
+                    <p>Built for smarter campus communities</p>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" data-target="2450">0</div>
+                        <div class="stat-label">Items Reported</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" data-target="1820">0</div>
+                        <div class="stat-label">Items Recovered</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" data-target="94">0%</div>
+                        <div class="stat-label">Successful Claims</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" data-target="12">0</div>
+                        <div class="stat-label">Campus Stations</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================================================
+         HOW IT WORKS
+         ========================================================================== -->
+        <section class="how-it-works" id="how-it-works">
+            <div class="container">
+                <div class="section-header-center">
+                    <div class="section-tag">Simple Process</div>
+                    <h2 class="section-title">Four steps to recovery</h2>
+                    <p class="section-subtitle">Designed to turn a frustrating lost-item scenario into a fast, verified
+                        return.</p>
+                </div>
+
+                <div class="steps-grid">
+                    <div class="step-card">
+                        <div class="step-number">01</div>
+                        <h3 class="step-title">Report</h3>
+                        <p class="step-desc">Submit details and photo of a lost or found item. Describe key features,
+                            date, and precise campus location.</p>
+                    </div>
+
+                    <div class="step-card">
+                        <div class="step-number">02</div>
+                        <h3 class="step-title">Search</h3>
+                        <p class="step-desc">Filter the live database by location, category, date, or unique tags to
+                            find matching campus listings instantly.</p>
+                    </div>
+
+                    <div class="step-card">
+                        <div class="step-number">03</div>
+                        <h3 class="step-title">Match</h3>
+                        <p class="step-desc">Automated smart matching links lost reports with found item entries and
+                            notifies users via instant alerts.</p>
+                    </div>
+
+                    <div class="step-card">
+                        <div class="step-number">04</div>
+                        <h3 class="step-title">Recover</h3>
+                        <p class="step-desc">Verify ownership via security questions or student ID, then collect your
+                            item at a designated campus office.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================================================
+         FEATURES SECTION
+         ========================================================================== -->
+        <section class="features" id="features">
+            <div class="container">
+                <div class="section-header-center">
+                    <div class="section-tag">Enterprise Technology</div>
+                    <h2 class="section-title">Intelligent campus features</h2>
+                    <p class="section-subtitle">A modern SaaS platform replacing legacy manual lost-and-found
+                        clipboards.</p>
+                </div>
+
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                        </div>
+                        <h3 class="feature-title">Smart Search</h3>
+                        <p class="feature-desc">Natural language indexing allows students to search with terms like
+                            "black hydroflask with stickers near Science Lab".</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <polygon
+                                    points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                                </polygon>
+                            </svg>
+                        </div>
+                        <h3 class="feature-title">Match Detection</h3>
+                        <p class="feature-desc">Automated cross-referencing scans incoming found reports against active
+                            lost item listings in real-time.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                        </div>
+                        <h3 class="feature-title">Secure Claims</h3>
+                        <p class="feature-desc">Prevent false claims with custom proof-of-ownership questions and
+                            encrypted verification workflows.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                            </svg>
+                        </div>
+                        <h3 class="feature-title">Real-time Notifications</h3>
+                        <p class="feature-desc">Get instant SMS and university email notifications the moment an item
+                            matching your description is registered.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                        </div>
+                        <h3 class="feature-title">Verified Recovery</h3>
+                        <p class="feature-desc">QR code handover confirmation logs every return for complete audit
+                            transparency across university stations.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                        </div>
+                        <h3 class="feature-title">Role-based Access</h3>
+                        <p class="feature-desc">Dedicated portals for students, faculty, and security administration
+                            with custom clearance levels.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================================================
+         CATEGORIES SECTION
+         ========================================================================== -->
+        <section class="categories">
+            <div class="container">
+                <div class="section-header-center">
+                    <div class="section-tag">Browse Directory</div>
+                    <h2 class="section-title">Browse by category</h2>
+                    <p class="section-subtitle">Quickly jump into active campus listings divided by item type.</p>
+                </div>
+
+                <div class="categories-grid">
+                    <a href="#recent" class="category-card">
+                        <div class="category-icon-wrapper">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                                <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                            </svg>
+                        </div>
+                        <div class="category-name">Electronics</div>
+                        <div class="category-count">142 Items Listed</div>
+                    </a>
+
+                    <a href="#recent" class="category-card">
+                        <div class="category-icon-wrapper">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <rect x="3" y="4" width="18" height="16" rx="2"></rect>
+                                <line x1="7" y1="8" x2="17" y2="8"></line>
+                                <line x1="7" y1="12" x2="13" y2="12"></line>
+                            </svg>
+                        </div>
+                        <div class="category-name">ID Cards</div>
+                        <div class="category-count">89 Items Listed</div>
+                    </a>
+
+                    <a href="#recent" class="category-card">
+                        <div class="category-icon-wrapper">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                            </svg>
+                        </div>
+                        <div class="category-name">Wallets</div>
+                        <div class="category-count">34 Items Listed</div>
+                    </a>
+
+                    <a href="#recent" class="category-card">
+                        <div class="category-icon-wrapper">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            </svg>
+                        </div>
+                        <div class="category-name">Books</div>
+                        <div class="category-count">67 Items Listed</div>
+                    </a>
+
+                    <a href="#recent" class="category-card">
+                        <div class="category-icon-wrapper">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path
+                                    d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="category-name">Keys</div>
+                        <div class="category-count">51 Items Listed</div>
+                    </a>
+
+                    <a href="#recent" class="category-card">
+                        <div class="category-icon-wrapper">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                                <line x1="3" y1="6" x2="21" y2="6"></line>
+                                <path d="M16 10a4 4 0 0 1-8 0"></path>
+                            </svg>
+                        </div>
+                        <div class="category-name">Bags</div>
+                        <div class="category-count">98 Items Listed</div>
+                    </a>
+
+                    <a href="#recent" class="category-card">
+                        <div class="category-icon-wrapper">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path
+                                    d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="category-name">Clothing</div>
+                        <div class="category-count">112 Items Listed</div>
+                    </a>
+
+                    <a href="#recent" class="category-card">
+                        <div class="category-icon-wrapper">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                        </div>
+                        <div class="category-name">Other</div>
+                        <div class="category-count">43 Items Listed</div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================================================
+         RECENT ITEMS SECTION
+         ========================================================================== -->
+        <section class="recent-items" id="recent">
+            <div class="container">
+                <div class="section-header-center">
+                    <div class="section-tag">Live Activity</div>
+                    <h2 class="section-title">Recent campus listings</h2>
+                    <p class="section-subtitle">Real-time inventory updated directly from security desks and student
+                        submissions.</p>
+                </div>
+
+                <div class="filter-tabs">
+                    <button class="tab-btn active" data-filter="all">All Items</button>
+                    <button class="tab-btn" data-filter="found">Found Items</button>
+                    <button class="tab-btn" data-filter="lost">Lost Items</button>
+                </div>
+
+                <div class="items-grid" id="itemsGrid">
+                    <!-- Item Card 1 -->
+                    <article class="item-card" data-type="found">
+                        <div class="item-image-wrapper">
+                            <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=600&q=80"
+                                alt="Apple MacBook Pro 14 inch">
+                            <div class="item-status-badge">
+                                <span class="badge badge-success">Found</span>
+                            </div>
+                        </div>
+                        <div class="item-content">
+                            <span class="item-category">Electronics</span>
+                            <h3 class="item-title">MacBook Pro 14" (Space Gray)</h3>
+                            <div class="item-meta-list">
+                                <div class="item-meta-item">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                        <circle cx="12" cy="10" r="3"></circle>
+                                    </svg>
+                                    Main Library, Study Room 3B
+                                </div>
+                                <div class="item-meta-item">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <polyline points="12 6 12 12 16 14"></polyline>
+                                    </svg>
+                                    Turned in 25 mins ago
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item-card-footer">
+                            <span style="font-size: 0.8125rem; font-weight: 600; color: var(--color-text-muted);">Ref:
+                                #LF-8921</span>
+                            <a href="#" class="btn btn-secondary btn-sm"
+                                style="padding: 0.375rem 0.875rem; font-size: 0.8125rem;">Claim Item</a>
+                        </div>
+                    </article>
+
+                    <!-- Item Card 2 -->
+                    <article class="item-card" data-type="lost">
+                        <div class="item-image-wrapper">
+                            <img src="https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=600&q=80"
+                                alt="Leather Student Wallet">
+                            <div class="item-status-badge">
+                                <span class="badge badge-warning">Lost</span>
+                            </div>
+                        </div>
+                        <div class="item-content">
+                            <span class="item-category">Wallets &amp; IDs</span>
+                            <h3 class="item-title">Brown Leather Wallet &amp; Student ID</h3>
+                            <div class="item-meta-list">
+                                <div class="item-meta-item">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                        <circle cx="12" cy="10" r="3"></circle>
+                                    </svg>
+                                    Student Union Dining Hall
+                                </div>
+                                <div class="item-meta-item">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <polyline points="12 6 12 12 16 14"></polyline>
+                                    </svg>
+                                    Lost Today, 11:30 AM
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item-card-footer">
+                            <span style="font-size: 0.8125rem; font-weight: 600; color: var(--color-text-muted);">Ref:
+                                #LF-8920</span>
+                            <a href="#" class="btn btn-secondary btn-sm"
+                                style="padding: 0.375rem 0.875rem; font-size: 0.8125rem;">Match Found?</a>
+                        </div>
+                    </article>
+
+                    <!-- Item Card 3 -->
+                    <article class="item-card" data-type="found">
+                        <div class="item-image-wrapper">
+                            <img src="https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&w=600&q=80"
+                                alt="Black Wireless Headphones">
+                            <div class="item-status-badge">
+                                <span class="badge badge-success">Found</span>
+                            </div>
+                        </div>
+                        <div class="item-content">
+                            <span class="item-category">Electronics</span>
+                            <h3 class="item-title">Sony Noise-Canceling Headphones</h3>
+                            <div class="item-meta-list">
+                                <div class="item-meta-item">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                        <circle cx="12" cy="10" r="3"></circle>
+                                    </svg>
+                                    Engineering Quad Auditorium
+                                </div>
+                                <div class="item-meta-item">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <polyline points="12 6 12 12 16 14"></polyline>
+                                    </svg>
+                                    Turned in 2 hours ago
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item-card-footer">
+                            <span style="font-size: 0.8125rem; font-weight: 600; color: var(--color-text-muted);">Ref:
+                                #LF-8918</span>
+                            <a href="#" class="btn btn-secondary btn-sm"
+                                style="padding: 0.375rem 0.875rem; font-size: 0.8125rem;">Claim Item</a>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================================================
+         CALL TO ACTION SECTION
+         ========================================================================== -->
+        <section class="cta-section" id="report">
+            <div class="container">
+                <div class="cta-wrapper">
+                    <h2 class="cta-title">Help reunite campus belongings with their owners.</h2>
+                    <p class="cta-desc">Whether you lost your keys in a lecture hall or found a backpack on the campus
+                        lawn, reporting takes less than 60 seconds.</p>
+                    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                        <a href="#" class="btn btn-primary btn-lg"
+                            style="background-color: white; color: var(--color-primary-900);">Get Started Now</a>
+                        <a href="#" class="btn btn-secondary btn-lg"
+                            style="background-color: transparent; border-color: rgba(255,255,255,0.3); color: white;">Contact
+                            Security Hub</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ==========================================================================
+       FOOTER
+       ========================================================================== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="#" class="brand-logo" style="color: white;">
+                        <div class="logo-icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                        </div>
+                        <span class="brand-name" style="color: white;">Campus<span
+                                style="color: #60a5fa;">Smart</span></span>
+                    </a>
+                    <p>The official intelligent recovery network for university campuses. Empowering students and staff
+                        to return lost items safely.</p>
+                </div>
+
+                <div>
+                    <h4 class="footer-heading">Platform</h4>
+                    <div class="footer-links">
+                        <a href="#recent">Search Inventory</a>
+                        <a href="#report">Report Lost Item</a>
+                        <a href="#report">Report Found Item</a>
+                        <a href="#how-it-works">How It Works</a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="footer-heading">Campus Locations</h4>
+                    <div class="footer-links">
+                        <a href="#">Central Library Hub</a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="footer-heading">Governance &amp; Help</h4>
+                    <div class="footer-links">
+                        <a href="/safety-guidelines">Campus Safety Guidelines</a>
+                        <a href="/privacy-policy">Privacy Policy</a>
+                        <a href="/terms-of-service">Terms of Service</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div>&copy; 2026 Campus Smart SaaS Technologies. All rights reserved.</div>
+                <div style="display: flex; gap: 1.5rem;">
+                    <a href="/privacy-policy">Privacy</a>
+                    <a href="/terms-of-service">Terms</a>
+                    <a href="/security-policy">Security</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==========================================================================
+       JAVASCRIPT INTERACTION LOGIC
+       ========================================================================== -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // 1. Mobile Menu Drawer Toggle
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileDrawer = document.getElementById('mobileDrawer');
+
+            if (mobileMenuBtn && mobileDrawer) {
+                mobileMenuBtn.addEventListener('click', () => {
+                    mobileDrawer.classList.toggle('active');
+                });
+
+                // Close mobile drawer when clicking links
+                mobileDrawer.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        mobileDrawer.classList.remove('active');
+                    });
+                });
+            }
+
+            // 2. Filter Tabs Logic for Recent Items
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const itemCards = document.querySelectorAll('.item-card');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Remove active class from all
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    const filterValue = btn.getAttribute('data-filter');
+
+                    itemCards.forEach(card => {
+                        if (filterValue === 'all') {
+                            card.style.display = 'flex';
+                        } else {
+                            if (card.getAttribute('data-type') === filterValue) {
+                                card.style.display = 'flex';
+                            } else {
+                                card.style.display = 'none';
+                            }
+                        }
+                    });
+                });
+            });
+
+            // 3. Counter Animation for Metrics Section
+            const statNumbers = document.querySelectorAll('.stat-number');
+            let animated = false;
+
+            const runCounter = () => {
+                statNumbers.forEach(stat => {
+                    const target = parseInt(stat.getAttribute('data-target'));
+                    const isPercentage = stat.innerText.includes('%');
+                    let count = 0;
+                    const speed = target / 50;
+
+                    const updateCount = () => {
+                        count += speed;
+                        if (count < target) {
+                            stat.innerText = Math.ceil(count) + (isPercentage ? '%' : '');
+                            setTimeout(updateCount, 30);
+                        } else {
+                            stat.innerText = target.toLocaleString() + (isPercentage ? '%' : '+');
+                        }
+                    };
+
+                    updateCount();
+                });
+            };
+
+            // Intersection Observer to trigger counter when visible
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !animated) {
+                        runCounter();
+                        animated = true;
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            const trustSection = document.querySelector('.trust-section');
+            if (trustSection) {
+                observer.observe(trustSection);
+            }
+        });
+    </script>
+</body>
+
+</html>
