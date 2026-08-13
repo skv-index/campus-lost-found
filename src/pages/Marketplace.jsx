@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Sidebar from "../component/Sidebar";
 import "./Marketplace.css";
+import API_BASE from '../config/api';
 // Mock Data
 const MOCK_ITEMS = [
     {
@@ -141,7 +142,7 @@ export default function Marketplace() {
                 limit: itemsPerPage,
             });
 
-            const response = await fetch(`/api/items?${queryParams.toString()}`);
+            const response = await fetch(`${API_BASE}/api/items?${queryParams.toString()}`);
             if (response.ok) {
                 const data = await response.json();
                 setDbItems(data.items || []);

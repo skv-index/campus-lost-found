@@ -6,6 +6,7 @@ import ItemSummaryCard from './ItemSummaryCard';
 import ProcessTracker from './ProcessTracker';
 import SecurityWarning from './SecurityWarning';
 import './ClaimItem.css';
+import API_BASE from '../config/api';
 
 const ClaimItem = () => {
     const navigate = useNavigate();
@@ -52,7 +53,7 @@ const ClaimItem = () => {
         const loadItem = async () => {
             setLoadError('');
             try {
-                const response = await fetch(`/api/items/${encodeURIComponent(itemId)}`);
+                const response = await fetch(`${API_BASE}/api/items/${encodeURIComponent(itemId)}`);
                 if (response.status === 503) {
                     throw new Error('Database is connecting or unavailable. Please try again shortly.');
                 }
@@ -94,7 +95,7 @@ const ClaimItem = () => {
         }
         setIsSubmitting(true);
         try {
-            const response = await fetch('/api/claims', {
+            const response = await fetch(`${API_BASE}/api/claims`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
                 body: JSON.stringify({ itemId: item.databaseId, ...formData }),

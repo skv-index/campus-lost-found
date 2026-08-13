@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import './SignIn.css';
+import API_BASE from '../config/api';
 
 export default function SignIn() {
     const navigate = useNavigate();
@@ -72,7 +73,7 @@ export default function SignIn() {
         setErrorMessage('');
 
         try {
-            const response = await fetch('/api/auth/login', {
+            const response = await fetch(`${API_BASE}/api/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: emailValue, password: passwordValue }),

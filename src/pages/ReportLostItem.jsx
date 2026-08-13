@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Sidebar from '../component/Sidebar';
 import './ReportLostItem.css';
+import API_BASE from '../config/api';
 
 export default function ReportLostItem() {
     const navigate = useNavigate();
@@ -121,7 +122,7 @@ export default function ReportLostItem() {
         if (isValid) {
             setIsSubmitting(true);
             try {
-                const response = await fetch('/api/items', {
+                const response = await fetch(`${API_BASE}/api/items`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({

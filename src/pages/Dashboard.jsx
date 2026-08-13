@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Sidebar from '../component/Sidebar';
 import StatusBadge from '../component/StatusBadge';
 import './Dashboard.css';
+import API_BASE from '../config/api';
 
 const Dashboard = () => {
     const navigate = useNavigate();
@@ -13,7 +14,7 @@ const Dashboard = () => {
     useEffect(() => {
         const loadMatches = async () => {
             try {
-                const response = await fetch('/api/items/matches');
+                const response = await fetch(`${API_BASE}/api/items/matches`);
                 if (!response.ok) throw new Error('Could not load matches');
                 setMatches(await response.json());
             } catch (error) {

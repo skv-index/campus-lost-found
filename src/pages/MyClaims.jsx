@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Sidebar from '../component/Sidebar';
 import StatusBadge from '../component/StatusBadge';
 import './MyClaims.css';
+import API_BASE from '../config/api';
 
 const MyClaims = () => {
     const navigate = useNavigate();
@@ -27,7 +28,7 @@ const MyClaims = () => {
         setIsLoading(true);
         setErrorMessage('');
         try {
-            const response = await fetch('/api/claims/mine', {
+            const response = await fetch(`${API_BASE}/api/claims/mine`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
@@ -95,7 +96,7 @@ const MyClaims = () => {
 
         setIsWithdrawing(true);
         try {
-            const response = await fetch(`/api/claims/${claimId}`, {
+            const response = await fetch(`${API_BASE}/api/claims/${claimId}`, {
                 method: 'DELETE',
                 headers: { Authorization: `Bearer ${token}` },
             });

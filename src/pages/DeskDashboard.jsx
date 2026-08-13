@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './DeskDashboard.css';
+import API_BASE from '../config/api';
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 const getInitials = (name = '') =>
@@ -54,10 +55,10 @@ export default function DeskDashboard() {
         setDataLoading(true);
         try {
             const [claimsRes, itemsRes] = await Promise.all([
-                fetch('/api/claims/all', {
+                fetch(`${API_BASE}/api/claims/all`, {
                     headers: { Authorization: `Bearer ${token}` },
                 }),
-                fetch('/api/items?limit=200', {
+                fetch(`${API_BASE}/api/items?limit=200`, {
                     headers: { Authorization: `Bearer ${token}` },
                 }),
             ]);
@@ -92,7 +93,7 @@ export default function DeskDashboard() {
             if (!token) { navigate('/login'); return; }
 
             try {
-                const res = await fetch('/api/auth/me', {
+                const res = await fetch(`${API_BASE}/api/auth/me`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 if (!res.ok) { navigate('/login'); return; }
@@ -119,7 +120,7 @@ export default function DeskDashboard() {
     const handleUpdateClaimStatus = async (claimId, newStatus) => {
         const token = localStorage.getItem('token');
         try {
-            const res = await fetch(`/api/claims/${claimId}/status`, {
+            const res = await fetch(`${API_BASE}/api/claims/${claimId}/status`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -157,7 +158,7 @@ export default function DeskDashboard() {
         // We add a PATCH/PUT endpoint or use existing — for now, give a friendly message
         // Items route doesn't have a status update endpoint yet — add it
         try {
-            const res = await fetch(`/api/items/${itemId}/status`, {
+            const res = await fetch(`${API_BASE}/api/items/${itemId}/status`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

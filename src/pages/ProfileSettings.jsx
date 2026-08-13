@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Sidebar from '../component/Sidebar';
 import './ProfileSettings.css';
+import API_BASE from '../config/api';
 
 const PRESET_AVATARS = [
     'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
@@ -54,7 +55,7 @@ const ProfileSettings = () => {
                 return;
             }
             try {
-                const response = await fetch('/api/auth/me', {
+                const response = await fetch(`${API_BASE}/api/auth/me`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 if (response.status === 401 || response.status === 403) {
@@ -127,7 +128,7 @@ const ProfileSettings = () => {
         setIsSavingProfile(true);
         setStatusMessage({ type: '', text: '' });
         try {
-            const response = await fetch('/api/auth/profile', {
+            const response = await fetch(`${API_BASE}/api/auth/profile`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -174,7 +175,7 @@ const ProfileSettings = () => {
 
         setIsUpdatingPass(true);
         try {
-            const response = await fetch('/api/auth/change-password', {
+            const response = await fetch(`${API_BASE}/api/auth/change-password`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -203,7 +204,7 @@ const ProfileSettings = () => {
         const token = localStorage.getItem('token');
         if (!token) return;
         try {
-            const response = await fetch('/api/auth/profile', {
+            const response = await fetch(`${API_BASE}/api/auth/profile`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -239,7 +240,7 @@ const ProfileSettings = () => {
             if (token) {
                 // Fetch claims submitted by current user
                 try {
-                    const claimsRes = await fetch('/api/claims/mine', {
+                    const claimsRes = await fetch(`${API_BASE}/api/claims/mine`, {
                         headers: { Authorization: `Bearer ${token}` },
                     });
                     if (claimsRes.ok) {
@@ -252,7 +253,7 @@ const ProfileSettings = () => {
                 // Fetch reported items matching current user's email
                 if (userEmail) {
                     try {
-                        const itemsRes = await fetch('/api/items');
+                        const itemsRes = await fetch(`${API_BASE}/api/items`);
                         if (itemsRes.ok) {
                             const data = await itemsRes.json();
                             const allItems = data.items || data || [];

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Sidebar from '../component/Sidebar';
 import './ReportFoundItem.css';
+import API_BASE from '../config/api';
 
 const ReportFoundItem = () => {
     const navigate = useNavigate();
@@ -142,7 +143,7 @@ const ReportFoundItem = () => {
         if (isValid) {
             setIsSubmitting(true);
             try {
-                const response = await fetch('/api/items', {
+                const response = await fetch(`${API_BASE}/api/items`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({

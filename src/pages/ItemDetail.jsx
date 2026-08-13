@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Sidebar from "../component/Sidebar";
 import "./ItemDetail.css";
+import API_BASE from '../config/api';
 
 const ItemDetail = () => {
     const navigate = useNavigate();
@@ -22,7 +23,7 @@ const ItemDetail = () => {
             setIsLoading(true);
             try {
                 // 1. Fetch primary item details from database
-                const response = await fetch(`/api/items/${id}`);
+                const response = await fetch(`${API_BASE}/api/items/${id}`);
                 if (response.ok) {
                     const data = await response.json();
                     setItem(data);
@@ -123,7 +124,7 @@ const ItemDetail = () => {
                     // 2. Fetch related items from database based on category
                     if (data.category) {
                         try {
-                            const relatedRes = await fetch(`/api/items?category=${encodeURIComponent(data.category)}`);
+                            const relatedRes = await fetch(`${API_BASE}/api/items?category=${encodeURIComponent(data.category)}`);
                             if (relatedRes.ok) {
                                 const relatedData = await relatedRes.json();
                                 const related = Array.isArray(relatedData)
