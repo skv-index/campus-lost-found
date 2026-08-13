@@ -90,27 +90,53 @@ export default function DeskDashboard() {
     useEffect(() => {
         const verify = async () => {
             const token = localStorage.getItem('token');
-            if (!token) { navigate('/login'); return; }
+            const savedUser = localStorage.getItem('user');
+            let initialUser = savedUser ? JSON.parse(savedUser) : null;
+
+            if (!token) {
+                navigate('/login');
+                return;
+            }
 
             try {
                 const res = await fetch(`${API_BASE}/api/auth/me`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
-                if (!res.ok) { navigate('/login'); return; }
 
-                const userData = await res.json();
-                if (userData.role !== 'staff' && userData.role !== 'teacher' && userData.role !== 'admin') {
-                    setAccessDenied(true);
-                    setIsLoading(false);
+                if (res.status === 401) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    navigate('/login');
                     return;
                 }
 
-                setUser(userData);
-                setIsLoading(false);
-                fetchDashboardData(token);
+                let userData = initialUser;
+                if (res.ok) {
+                    userData = await res.json();
+                    localStorage.setItem('user', JSON.stringify(userData));
+                }
+
+                if (userData) {
+                    if (userData.role !== 'staff' && userData.role !== 'teacher' && userData.role !== 'admin') {
+                        setAccessDenied(true);
+                        setIsLoading(false);
+                        return;
+                    }
+                    setUser(userData);
+                    setIsLoading(false);
+                    fetchDashboardData(token);
+                } else {
+                    navigate('/login');
+                }
             } catch (err) {
-                console.error('Auth error:', err);
-                navigate('/login');
+                console.error('Auth verification error:', err);
+                if (initialUser && (initialUser.role === 'staff' || initialUser.role === 'teacher' || initialUser.role === 'admin')) {
+                    setUser(initialUser);
+                    setIsLoading(false);
+                    fetchDashboardData(token);
+                } else {
+                    navigate('/login');
+                }
             }
         };
         verify();
