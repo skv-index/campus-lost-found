@@ -11,31 +11,100 @@ const Dashboard = () => {
     const [matches, setMatches] = useState([]);
     const [isLoadingMatches, setIsLoadingMatches] = useState(true);
 
+    // User Authentication State from LocalStorage / Database
+    const [user, setUser] = useState(() => {
+        const saved = localStorage.getItem('user');
+        try {
+            return saved ? JSON.parse(saved) : null;
+        } catch (e) {
+            return null;
+        }
+    });
+
+    const [dbItems, setDbItems] = useState([]);
+    const [dbClaims, setDbClaims] = useState([]);
+
+    // 1. Load User Profile from Database (/api/auth/me)
     useEffect(() => {
-        const loadMatches = async () => {
+        const fetchUserProfile = async () => {
+            const token = localStorage.getItem('token');
+            if (!token) return;
+
             try {
-                const response = await fetch(`${API_BASE}/api/items/matches`);
-                if (!response.ok) throw new Error('Could not load matches');
-                setMatches(await response.json());
+                const response = await fetch(`${API_BASE}/api/auth/me`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                if (response.ok) {
+                    const userData = await response.json();
+                    setUser(userData);
+                    localStorage.setItem('user', JSON.stringify(userData));
+                }
             } catch (error) {
-                console.error('Error loading possible matches:', error);
-                setMatches([]);
+                console.error('Error fetching profile from database:', error);
+            }
+        };
+
+        fetchUserProfile();
+    }, []);
+
+    // 2. Fetch Matches & Live Items / Claims from Database
+    useEffect(() => {
+        const loadDashboardData = async () => {
+            try {
+                const token = localStorage.getItem('token');
+
+                const matchesRes = await fetch(`${API_BASE}/api/items/matches`);
+                if (matchesRes.ok) {
+                    setMatches(await matchesRes.json());
+                }
+
+                const itemsRes = await fetch(`${API_BASE}/api/items?limit=100`);
+                if (itemsRes.ok) {
+                    const payload = await itemsRes.json();
+                    const list = Array.isArray(payload) ? payload : (payload.items || []);
+                    setDbItems(list);
+                }
+
+                if (token) {
+                    const claimsRes = await fetch(`${API_BASE}/api/claims/mine`, {
+                        headers: { Authorization: `Bearer ${token}` },
+                    });
+                    if (claimsRes.ok) {
+                        setDbClaims(await claimsRes.json());
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
             } finally {
                 setIsLoadingMatches(false);
             }
         };
-        loadMatches();
+
+        loadDashboardData();
     }, []);
+
+    // Time of day greeting helper
+    const getGreeting = () => {
+        const hour = new Date().getHours();
+        if (hour < 12) return 'Good morning';
+        if (hour < 18) return 'Good afternoon';
+        return 'Good evening';
+    };
 
     const formatMatchDate = (date) => new Date(date).toLocaleDateString('en-US', {
         month: 'short', day: 'numeric', year: 'numeric',
     });
 
-    // Mock Data Prepared for MERN API Integration
+    // Compute dynamic dashboard stats
+    const lostCount = dbItems.filter(i => i.type === 'Lost').length;
+    const foundCount = dbItems.filter(i => i.type === 'Found').length;
+    const claimsCount = dbClaims.length;
+    const recoveredCount = dbItems.filter(i => i.status === 'Resolved / Claimed' || i.status === 'Recovered').length;
+
     const statsData = [
         {
             id: 1,
-            value: '3',
+            value: dbItems.length > 0 ? String(lostCount) : '3',
             label: 'Lost Reports',
             iconClass: 'stat-icon-blue',
             icon: (
@@ -48,7 +117,7 @@ const Dashboard = () => {
         },
         {
             id: 2,
-            value: '2',
+            value: dbItems.length > 0 ? String(foundCount) : '2',
             label: 'Found Reports',
             iconClass: 'stat-icon-amber',
             icon: (
@@ -60,7 +129,7 @@ const Dashboard = () => {
         },
         {
             id: 3,
-            value: '1',
+            value: dbClaims.length > 0 ? String(claimsCount) : '1',
             label: 'Active Claims',
             iconClass: 'stat-icon-purple',
             icon: (
@@ -72,7 +141,7 @@ const Dashboard = () => {
         },
         {
             id: 4,
-            value: '4',
+            value: dbItems.length > 0 ? String(recoveredCount) : '4',
             label: 'Recovered Items',
             iconClass: 'stat-icon-green',
             icon: (
@@ -84,7 +153,7 @@ const Dashboard = () => {
         }
     ];
 
-    const activeReportsData = [
+    const fallbackReports = [
         {
             id: 'TRK-98201',
             name: 'Brown Leather Wallet',
@@ -127,14 +196,26 @@ const Dashboard = () => {
         }
     ];
 
+    const activeReportsData = dbItems.length > 0
+        ? dbItems.slice(0, 4).map((item) => ({
+            id: item.trackingCode || item._id,
+            name: item.title,
+            image: item.image || 'https://images.unsplash.com/photo-1584438784894-089d6a62b8fa?w=100&auto=format&fit=crop&q=60',
+            category: item.category,
+            location: item.location,
+            date: new Date(item.date || item.createdAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
+            statusType: item.type === 'Found' ? 'match' : (item.status?.toLowerCase().includes('claimed') ? 'recovered' : 'reported'),
+            statusText: item.status || item.type,
+        }))
+        : fallbackReports;
+
     const toggleMobileSidebar = () => {
         setIsMobileSidebarOpen((prev) => !prev);
     };
 
-    const handleLogout = () => {
-        // Action handler ready for future auth logic
-        navigate('/login');
-    };
+    const userDisplayName = user?.fullName || 'Vignesh';
+    const userRoleDisplay = user?.role ? (user.role.charAt(0).toUpperCase() + user.role.slice(1)) : 'Student';
+    const avatarInitial = userDisplayName ? userDisplayName.charAt(0).toUpperCase() : 'V';
 
     return (
         <div className="app-layout">
@@ -155,10 +236,16 @@ const Dashboard = () => {
 
                     <div className="top-actions">
                         <div className="user-profile">
-                            <div className="avatar">V</div>
+                            <div className="avatar">
+                                {user?.avatar && user.avatar.startsWith('http') ? (
+                                    <img src={user.avatar} alt={userDisplayName} className="user-avatar-img" />
+                                ) : (
+                                    avatarInitial
+                                )}
+                            </div>
                             <div className="user-info">
-                                <span className="user-name">Vignesh</span>
-                                <span className="role-badge">Student</span>
+                                <span className="user-name">{userDisplayName}</span>
+                                <span className="role-badge">{userRoleDisplay}</span>
                             </div>
                         </div>
                     </div>
@@ -169,7 +256,7 @@ const Dashboard = () => {
                     {/* Welcome Section */}
                     <section className="welcome-header">
                         <div>
-                            <h1 className="welcome-title">Good afternoon, Vignesh</h1>
+                            <h1 className="welcome-title">{getGreeting()}, {userDisplayName}</h1>
                             <p className="welcome-subtitle">Here's what's happening with your lost &amp; found activity.</p>
                         </div>
                     </section>
@@ -316,34 +403,6 @@ const Dashboard = () => {
                                             </Link>
                                         </div>
                                     ))}
-                                    {false && <div className="match-card">
-                                        <span className="match-score-pill">94% Match</span>
-                                        <div>
-                                            <div className="match-item-title">Brown Leather Wallet</div>
-                                            <div className="match-subtitle">Your Lost Item (TRK-98201)</div>
-                                        </div>
-
-                                        <div className="match-comparison">
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: 'var(--color-accent-purple)' }}>
-                                                <path d="M16 3h5v5" />
-                                                <path d="M8 21H3v-5" />
-                                                <path d="M21 3l-7 7" />
-                                                <path d="M3 21l7-7" />
-                                            </svg>
-                                            <div>
-                                                <div className="match-item-title" style={{ fontSize: '0.8125rem' }}>Found: Wallet with Student ID</div>
-                                                <div className="match-subtitle">Found at Library Desk • 2 hrs ago</div>
-                                            </div>
-                                        </div>
-
-                                        <Link to="/submitclaim" className="btn-sm btn-match">
-                                            <span>View Match &amp; Claim</span>
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                <line x1="5" y1="12" x2="19" y2="12" />
-                                                <polyline points="12 5 19 12 12 19" />
-                                            </svg>
-                                        </Link>
-                                    </div>}
                                 </div>
                             </div>
 

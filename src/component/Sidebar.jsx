@@ -10,7 +10,8 @@ const Sidebar = ({ activePage = 'dashboard', mobileOpen = false }) => {
     const navigate = useNavigate();
 
     const handleLogout = () => {
-        // Ready for future auth logic
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
         navigate('/login');
     };
 
