@@ -510,6 +510,11 @@ export default function Marketplace() {
                                                     src={item.image}
                                                     alt={item.title}
                                                     className="card-image"
+                                                    loading="lazy"
+                                                    onError={(e) => {
+                                                        const fb = 'https://images.unsplash.com/photo-1584438784894-089d6a62b8fa?auto=format&fit=crop&w=600&q=80';
+                                                        if (e.currentTarget.src !== fb) e.currentTarget.src = fb;
+                                                    }}
                                                 />
                                                 <span
                                                     className={`card-badge ${(item.type || 'Lost').toLowerCase()}`}

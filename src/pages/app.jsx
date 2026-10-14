@@ -539,7 +539,15 @@ export default function CampusSmart() {
                             {filteredItems.map((item, index) => (
                                 <article key={index} className="item-card">
                                     <div className="item-image-wrapper">
-                                        <img src={item.image} alt={item.title} />
+                                        <img
+                                            src={item.image}
+                                            alt={item.title}
+                                            loading="lazy"
+                                            onError={(e) => {
+                                                const fb = 'https://images.unsplash.com/photo-1584438784894-089d6a62b8fa?auto=format&fit=crop&w=600&q=80';
+                                                if (e.currentTarget.src !== fb) e.currentTarget.src = fb;
+                                            }}
+                                        />
                                         <div className="item-status-badge">
                                             <span className={`badge ${item.type === 'found' ? 'badge-success' : 'badge-warning'}`}>
                                                 {item.type === 'found' ? 'Found' : 'Lost'}

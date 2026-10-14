@@ -79,7 +79,24 @@ export default function SignIn() {
                 body: JSON.stringify({ email: emailValue, password: passwordValue }),
             });
 
-            const data = await response.json();
+            // Read as text first: the server (or a proxy / static host rewrite)
+            // may return an HTML error page (e.g. Vite proxy 500, Vercel
+            // index.html fallback) instead of JSON. Parsing that with
+            // response.json() throws "Unexpected token '<', '<!DOCTYPE ...'".
+            const rawText = await response.text();
+            let data = {};
+            try {
+                data = rawText ? JSON.parse(rawText) : {};
+            } catch {
+                console.error('Login: non-JSON response:', rawText.slice(0, 500));
+                setErrorMessage(
+                    response.status === 500
+                        ? 'Authentication server error (500). Is the backend running on port 5000?'
+                        : 'Unexpected response from authentication server. Please check your backend connection.'
+                );
+                setGlobalError(true);
+                return;
+            }
 
             if (response.ok) {
                 // Save user and token to local storage

@@ -35,15 +35,72 @@ const ClaimItem = () => {
         }));
     };
 
-    // Handle File Upload Trigger
+    // Handle File Upload Trigger (images / screenshots / PDFs)
     const handleFileChange = (e) => {
-        if (e.target.files) {
-            setFormData((prev) => ({
-                ...prev,
-                files: Array.from(e.target.files),
-            }));
+        if (!e.target.files) return;
+        const selected = Array.from(e.target.files);
+        const valid = [];
+        for (const file of selected) {
+            const isImage = file.type.startsWith('image/');
+            const isPdf = file.type === 'application/pdf';
+            if (!isImage && !isPdf) {
+                alert(`"${file.name}" is not supported. Please upload PNG, JPG, WEBP, or PDF.`);
+                continue;
+            }
+            if (file.size > 10 * 1024 * 1024) {
+                alert(`"${file.name}" exceeds 10 MB. Please choose a smaller file.`);
+                continue;
+            }
+            valid.push(file);
         }
+        const combined = [...formData.files, ...valid].slice(0, 5);
+        if ([...formData.files, ...valid].length > 5) {
+            alert('You can attach up to 5 proof files.');
+        }
+        // Attach object-URL previews so selected images/screenshots render correctly
+        const withPreview = combined.map((file) => {
+            if (file.previewUrl) return file;
+            try {
+                Object.defineProperty(file, 'previewUrl', {
+                    value: file.type.startsWith('image/') ? URL.createObjectURL(file) : '',
+                    writable: true,
+                    configurable: true,
+                });
+            } catch {
+                // ignore - preview simply won't show
+            }
+            return file;
+        });
+        setFormData((prev) => ({
+            ...prev,
+            files: withPreview,
+        }));
+        // Reset input so the same file can be re-selected after removal
+        e.target.value = '';
     };
+
+    const handleRemoveProofFile = (index) => {
+        setFormData((prev) => {
+            const next = [...prev.files];
+            const [removed] = next.splice(index, 1);
+            if (removed?.previewUrl) {
+                try { URL.revokeObjectURL(removed.previewUrl); } catch { /* noop */ }
+            }
+            return { ...prev, files: next };
+        });
+    };
+
+    useEffect(() => {
+        // Revoke object URLs on unmount to avoid memory leaks
+        return () => {
+            formData.files.forEach((f) => {
+                if (f?.previewUrl) {
+                    try { URL.revokeObjectURL(f.previewUrl); } catch { /* noop */ }
+                }
+            });
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     useEffect(() => {
         if (!itemId) {
@@ -95,10 +152,16 @@ const ClaimItem = () => {
         }
         setIsSubmitting(true);
         try {
+            const { files, ...rest } = formData;
             const response = await fetch(`${API_BASE}/api/claims`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-                body: JSON.stringify({ itemId: item.databaseId, ...formData }),
+                body: JSON.stringify({
+                    itemId: item.databaseId,
+                    ...rest,
+                    proofFileNames: files.map((f) => f.name),
+                    proofFileCount: files.length,
+                }),
             });
             const data = await response.json();
             if (!response.ok) throw new Error(data.message || 'Could not submit claim.');
@@ -262,10 +325,10 @@ const ClaimItem = () => {
                                 <div>
                                     <div className="upload-title">
                                         {formData.files.length > 0
-                                            ? `${formData.files.length} file(s) selected`
+                                            ? `${formData.files.length} file(s) selected — click to add more`
                                             : 'Click to upload supporting files'}
                                     </div>
-                                    <div className="upload-hint">PNG, JPG, PDF up to 10MB each</div>
+                                    <div className="upload-hint">PNG, JPG, PDF up to 10MB each (max 5 files)</div>
                                 </div>
                                 <div className="upload-badges">
                                     <span className="upload-badge">Receipt</span>
@@ -278,9 +341,45 @@ const ClaimItem = () => {
                                     id="file-input"
                                     style={{ display: 'none' }}
                                     multiple
+                                    accept="image/png,image/jpeg,image/webp,image/*,application/pdf"
                                     onChange={handleFileChange}
                                 />
                             </div>
+                            {formData.files.length > 0 && (
+                                <div className="proof-preview-grid">
+                                    {formData.files.map((file, index) => (
+                                        <div className="proof-preview-card" key={`${file.name}-${index}`}>
+                                            {file.type.startsWith('image/') && file.previewUrl ? (
+                                                <img
+                                                    src={file.previewUrl}
+                                                    alt={`Proof preview ${index + 1}: ${file.name}`}
+                                                    className="proof-preview-img"
+                                                />
+                                            ) : (
+                                                <div className="proof-preview-file">
+                                                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                                        <polyline points="14 2 14 8 20 8" />
+                                                    </svg>
+                                                    <span>PDF</span>
+                                                </div>
+                                            )}
+                                            <div className="proof-preview-meta">
+                                                <span className="proof-preview-name" title={file.name}>{file.name}</span>
+                                                <span className="proof-preview-size">{(file.size / 1024).toFixed(0)} KB</span>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                className="proof-remove-btn"
+                                                aria-label={`Remove ${file.name}`}
+                                                onClick={(e) => { e.stopPropagation(); handleRemoveProofFile(index); }}
+                                            >
+                                                Remove
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
 
                         {/* BOTTOM FORM ACTIONS */}

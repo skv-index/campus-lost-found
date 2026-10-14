@@ -4,6 +4,13 @@ import Sidebar from "../component/Sidebar";
 import "./ItemDetail.css";
 import API_BASE from '../config/api';
 
+const FALLBACK_IMAGE =
+    "https://images.unsplash.com/photo-1584438784894-089d6a62b8fa?auto=format&fit=crop&w=1000&q=80";
+
+const handleImgError = (e) => {
+    if (e.currentTarget.src !== FALLBACK_IMAGE) e.currentTarget.src = FALLBACK_IMAGE;
+};
+
 const ItemDetail = () => {
     const navigate = useNavigate();
     const { id } = useParams();
@@ -224,9 +231,10 @@ const ItemDetail = () => {
                         <div className="gallery-container">
                             <div className="main-image-card">
                                 <img
-                                    src={selectedImage || item.image}
+                                    src={selectedImage || item.image || FALLBACK_IMAGE}
                                     className="main-image"
                                     alt={item.title || "Item Image"}
+                                    onError={handleImgError}
                                 />
                             </div>
                         </div>
@@ -465,6 +473,8 @@ const ItemDetail = () => {
                                                         "https://images.unsplash.com/photo-1584438784894-089d6a62b8fa?auto=format&fit=crop&w=500&q=80"
                                                     }
                                                     alt={relItem.title}
+                                                    loading="lazy"
+                                                    onError={handleImgError}
                                                 />
                                                 <span className="related-badge">{relItem.type || "ITEM"}</span>
                                             </div>

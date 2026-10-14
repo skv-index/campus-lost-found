@@ -347,7 +347,16 @@ const Dashboard = () => {
                                             <tr key={item.id}>
                                                 <td>
                                                     <div className="item-cell">
-                                                        <img src={item.image} className="item-thumb" alt={item.name} />
+                                                        <img
+                                                            src={item.image}
+                                                            className="item-thumb"
+                                                            alt={item.name}
+                                                            loading="lazy"
+                                                            onError={(e) => {
+                                                                const fb = 'https://images.unsplash.com/photo-1584438784894-089d6a62b8fa?w=100&auto=format&fit=crop&q=60';
+                                                                if (e.currentTarget.src !== fb) e.currentTarget.src = fb;
+                                                            }}
+                                                        />
                                                         <div>
                                                             <div className="item-name">{item.name}</div>
                                                             <div className="item-id">{item.id}</div>

@@ -20,6 +20,10 @@ const envOrigins = process.env.CORS_ORIGIN
     : [];
 const allowedOrigins = [...new Set([...devOrigins, ...envOrigins])];
 
+// Vite auto-increments ports (5173 -> 5174 -> 5175...) when one is busy,
+// so allow ANY localhost / 127.0.0.1 port in development instead of a fixed list.
+const localhostPattern = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
+
 // Also allow all Vercel preview deployments for this project
 const vercelPreviewPattern = /^https:\/\/campus-lost-found[a-z0-9-]*\.vercel\.app$/;
 
@@ -31,6 +35,8 @@ app.use(cors({
         if (!origin) return callback(null, true);
         // Allow exact matches
         if (allowedOrigins.includes(origin)) return callback(null, true);
+        // Allow any local dev server port (fixes CORS blocked: http://localhost:5174)
+        if (localhostPattern.test(origin)) return callback(null, true);
         // Allow all Vercel preview URLs for this project
         if (vercelPreviewPattern.test(origin)) return callback(null, true);
 
@@ -54,6 +60,29 @@ app.use('/api/claims', claimsRoutes);
 // Health check endpoint
 app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', message: 'Campus Smart API Server is running' });
+});
+
+// Return JSON (never HTML) for unknown /api/* routes.
+// Without this, frontend fetch().json() crashes with
+// "Unexpected token '<', '<!DOCTYPE ...' is not valid JSON".
+app.use('/api', (req, res) => {
+    res.status(404).json({ message: `API route not found: ${req.method} ${req.originalUrl}` });
+});
+
+// Central error handler — always JSON, even for body-parser SyntaxError
+// (malformed JSON body) which Express otherwise renders as an HTML page.
+// MUST be registered after all routes (4-arg signature).
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+    if (err?.type === 'entity.parse.failed' || err instanceof SyntaxError) {
+        return res.status(400).json({ message: 'Invalid JSON in request body.' });
+    }
+    if (err?.message?.startsWith('CORS blocked')) {
+        return res.status(403).json({ message: err.message });
+    }
+    console.error('Unhandled server error:', err);
+    const status = err?.status || 500;
+    res.status(status).json({ message: err?.message || 'Internal server error' });
 });
 
 const PORT = process.env.PORT || 5000;

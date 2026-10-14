@@ -1116,6 +1116,7 @@
 }
 
 @media (min-width: 768px) {
+
     .footer-grid,
     .campus-smart-app .footer-grid {
         grid-template-columns: 1.4fr 1fr 1fr 1.3fr;
@@ -1176,6 +1177,7 @@
 }
 
 @media (min-width: 768px) {
+
     .footer-bottom,
     .campus-smart-app .footer-bottom {
         flex-direction: row;

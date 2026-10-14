@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Campus Smart - Wireframe</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+body{background:#f2f2f2;color:#333;padding:20px}
+.note{background:#fffbe6;border:1px dashed #999;padding:10px;text-align:center;margin-bottom:16px}
+.wf{max-width:1000px;margin:auto;background:#fff;border:2px solid #333}
+.box{border:1.5px dashed #777;background:#fafafa;padding:12px;margin:10px;text-align:center}
+header{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.logo{font-weight:bold;border:2px solid #333;padding:8px 16px}
+nav{display:flex;gap:8px;flex-wrap:wrap}
+nav span{border:1px solid #777;padding:6px 12px;background:#eee;font-size:13px}
+.hero{padding:28px 12px;background:#e9e9e9}
+.hero h1{font-size:28px;margin-bottom:8px}
+.searchbar{display:flex;gap:8px;justify-content:center;margin-top:12px}
+.searchbar div{border:1px solid #777;background:#fff;padding:10px;flex:1;max-width:400px;color:#888}
+.btn{background:#333;color:#fff;padding:10px 18px;border:none}
+.actions{display:flex;gap:10px;justify-content:center}
+.actions div{flex:1;padding:16px;font-weight:bold}
+.filters{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.filters span{border:1px solid #777;padding:6px 14px;font-size:13px;background:#fff}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.card{border:1.5px solid #777;padding:0;text-align:left}
+.img{height:100px;background:#d6d6d6;display:flex;align-items:center;justify-content:center;color:#666}
+.card p{padding:6px 10px;font-size:13px}
+.card .row{display:flex;justify-content:space-between;padding:6px 10px}
+.tag{font-size:11px;border:1px solid #777;padding:2px 8px;background:#eee}
+.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.flow div{padding:16px;font-size:13px}
+footer{background:#333;color:#fff;padding:14px;text-align:center;font-size:13px}
+@media(max-width:700px){.grid,.flow{grid-template-columns:1fr}header{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="note">WIREFRAME (low-fidelity) — Campus Smart / Campus Lost &amp; Found — single HTML, no backend</div>
+<div class="wf">
+  <div class="box">
+    <header>
+      <div class="logo">[ Logo ] Campus Smart</div>
+      <nav><span>Home</span><span>Marketplace</span><span>My Claims</span><span>Desk Dashboard</span><span>Login / Profile</span></nav>
+    </header>
+  </div>
+  <div class="box hero">
+    <h1>[ Hero ] Find Lost Items on Campus</h1>
+    <p>[ Subtext ] Report • Search • Claim • Track with TRK-XXXX</p>
+    <div class="searchbar"><div>[ Search bar - title / tracking code / location ]</div><button class="btn">Search</button></div>
+    <br/>
+    <div class="actions">
+      <div class="box">[ + Report Lost ]</div>
+      <div class="box">[ + Report Found ]</div>
+      <div class="box">[ Track Claim ]</div>
+    </div>
+  </div>
+  <div class="box">
+    <b>[ Filters ]</b>
+    <div class="filters"><span>Type: Lost/Found</span><span>Category</span><span>Location</span><span>Sort: Newest</span></div>
+  </div>
+  <div class="box">
+    <b>[ Item Grid - Marketplace ]</b>
+    <div class="grid">
+      <div class="card"><div class="img">[ Image ]</div><p><b>[ Item Title ]</b></p><p>[ Location • Date ]</p><div class="row"><span class="tag">TRK-0001</span><span class="tag">Claim →</span></div></div>
+      <div class="card"><div class="img">[ Image ]</div><p><b>[ Item Title ]</b></p><p>[ Location • Date ]</p><div class="row"><span class="tag">TRK-0002</span><span class="tag">Claim →</span></div></div>
+      <div class="card"><div class="img">[ Image ]</div><p><b>[ Item Title ]</b></p><p>[ Location • Date ]</p><div class="row"><span class="tag">TRK-0003</span><span class="tag">View →</span></div></div>
+    </div>
+  </div>
+  <div class="box">
+    <b>[ How it Works ]</b>
+    <div class="flow">
+      <div class="box">1. Report<br/>[ Lost / Found form ]</div>
+      <div class="box">2. Match<br/>[ Auto-match ≥55% ]</div>
+      <div class="box">3. Claim<br/>[ Proof + Reason ]</div>
+      <div class="box">4. Recover<br/>[ Staff Approves ]</div>
+    </div>
+  </div>
+  <footer>[ Footer ] About • Safety • Contact • Privacy — © Campus Smart 2026</footer>
+</div>
+</body>
+</html>

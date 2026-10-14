@@ -1,12 +1,22 @@
 import React from "react";
 
+const FALLBACK_IMAGE =
+    "https://images.unsplash.com/photo-1584438784894-089d6a62b8fa?auto=format&fit=crop&w=600&q=80";
+
 export default function ItemCard({ item }) {
     const isFound = item.type === "found";
 
     return (
         <article className="item-card" data-type={item.type}>
             <div className="item-image-wrapper">
-                <img src={item.image} alt={item.title} />
+                <img
+                    src={item.image || FALLBACK_IMAGE}
+                    alt={item.title}
+                    loading="lazy"
+                    onError={(e) => {
+                        if (e.currentTarget.src !== FALLBACK_IMAGE) e.currentTarget.src = FALLBACK_IMAGE;
+                    }}
+                />
                 <div className="item-status-badge">
                     <span className={`badge ${isFound ? "badge-success" : "badge-warning"}`}>
                         {isFound ? "Found" : "Lost"}

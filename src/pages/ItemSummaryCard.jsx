@@ -1,9 +1,20 @@
 import React from 'react';
 
+const FALLBACK_IMAGE =
+    'https://images.unsplash.com/photo-1584438784894-089d6a62b8fa?auto=format&fit=crop&w=600&q=80';
+
 const ItemSummaryCard = ({ item }) => {
     return (
         <div className="item-summary-card">
-            <img src={item.image} alt={item.title} className="item-summary-thumb" />
+            <img
+                src={item.image || FALLBACK_IMAGE}
+                alt={item.title}
+                className="item-summary-thumb"
+                loading="lazy"
+                onError={(e) => {
+                    if (e.currentTarget.src !== FALLBACK_IMAGE) e.currentTarget.src = FALLBACK_IMAGE;
+                }}
+            />
 
             <div className="item-summary-details">
                 <h2 className="item-summary-title">{item.title}</h2>
